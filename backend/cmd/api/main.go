@@ -1,12 +1,17 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
+
+	"soundhub/internal/search"
 )
 
 func main() {
 	mux := http.NewServeMux()
+
+	searchService := search.NewService()
 
 	mux.HandleFunc("/api/health", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("OK"))
@@ -15,8 +20,10 @@ func main() {
 	mux.HandleFunc("/api/search", func(w http.ResponseWriter, r *http.Request) {
 		query := r.URL.Query().Get("q")
 
+		results, _ := searchService.Search(query)
+
 		w.Header().Set("Content-Type", "application/json")
-		w.Write([]byte(`{"query": "` + query + `"}`))
+		json.NewEncoder(w).Encode(results)
 	})
 
 	log.Println("Server running on :8080")

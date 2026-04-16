@@ -1,3 +1,3 @@
-module SoundHub
+module soundhub
 
 go 1.25.5
